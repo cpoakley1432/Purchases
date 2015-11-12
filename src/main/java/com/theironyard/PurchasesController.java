@@ -46,10 +46,10 @@ public class PurchasesController {
                 String line = scanner.nextLine();
                 String[] columns =line.split(",");
                 Purchase p = new Purchase();
-                p.date = columns[0];
-                p.creditCard = columns[1];
-                p.cvv = columns[2];
-                p.category = columns[3];
+                p.date = columns[1];
+                p.creditCard = columns[2];
+                p.cvv = columns[3];
+                p.category = columns[4];
                 int count = Integer.valueOf(columns[0]);
                 Customer customer = customers.findOne(count);
                 p.customer = customer;
@@ -91,10 +91,12 @@ public class PurchasesController {
     }
 
     @RequestMapping ("/")
-    public String home (Model model, String category){
+    public String home (Model model, String category) {
         //Iterable<Purchase> purchaseList = purchases.findAll();
-        if (category != null){
-            model.addAttribute("purchases" , purchases.findByCategory(category));
+        if (category != null) {
+            model.addAttribute("purchases", purchases.findByCategory(category));
+        } else {
+            model.addAttribute("purchases", purchases.findAll());
         }
         return "home";
     }
