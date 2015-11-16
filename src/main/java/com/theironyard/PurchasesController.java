@@ -1,9 +1,12 @@
 package com.theironyard;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -91,18 +94,27 @@ public class PurchasesController {
     }
 
     @RequestMapping ("/")
-    public String home (Model model, String category) {
+    public String home (Model model, String category,@RequestParam(defaultValue = "0") int page) {
         //Iterable<Purchase> purchaseList = purchases.findAll();
+        PageRequest pr = new PageRequest(page, 10);
+
+        Page p;
+
         if (category != null) {
-            model.addAttribute("purchases", purchases.findByCategory(category));
+            p = purchases.findByCategory(pr, category);
         } else {
-            model.addAttribute("purchases", purchases.findAll());
+            p =  purchases.findAll(pr);
         }
+
+        model.addAttribute("nextPage" , page+1);
+        model.addAttribute("category" , category);
+        model.addAttribute("purchases" , p);
+        model.addAttribute("showNext" , p.hasNext());
         return "home";
     }
 
 
-    static String readFile(String fileName) {
+    /*static String readFile(String fileName) {
         File f = new File(fileName);
         try {
             FileReader fr = new FileReader(f);
@@ -113,5 +125,5 @@ public class PurchasesController {
         } catch (Exception e) {
             return null;
         }
-    }
+    }*/
 }
